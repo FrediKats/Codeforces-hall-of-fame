@@ -10,15 +10,17 @@ namespace CodeforcesHallOfFame.Models
             Members = Members.OrderBy(h => h.Handle).ToList();
         }
         public List<User> Members { get; set; }
-        public int TeamId { get; set; }
         public string TeamName { get; set; }
 
-        public override string ToString()
+        public string HandlesToString()
         {
-            var members = Members.Count == 1
+            return Members.Count == 1
                 ? $"{Members[0]}"
                 : $"{Members[0]} & {Members[1]}";
-            return $"{TeamName}({members})";
+        }
+        public override string ToString()
+        {
+            return $"{TeamName}({HandlesToString()})";
         }
 
         public override bool Equals(object obj)

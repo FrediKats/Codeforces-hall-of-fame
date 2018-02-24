@@ -15,7 +15,13 @@ namespace CodeforcesHallOfFame
             using (WebClient wc = new WebClient())
             {
                 var json = wc.DownloadString($"{ContestUrl}contestId={contestId}");
-                var res = JObject.Parse(json)["result"]["rows"].ToObject<List<Partition>>();
+                var jObjectData = JObject.Parse(json)["result"];
+                var res = jObjectData["rows"].ToObject<List<Partition>>();
+                foreach (var partition in res)
+                {
+                    partition.ContestName = (string) jObjectData["contest"]["name"];
+                }
+
                 return res;
             }
         }
