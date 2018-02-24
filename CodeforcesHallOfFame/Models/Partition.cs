@@ -1,10 +1,23 @@
-﻿namespace CodeforcesHallOfFame.Models
+﻿using System;
+
+namespace CodeforcesHallOfFame.Models
 {
     public class Partition
     {
+        public string ContestName { get; set; }
         public Team Party { get; set; }
         public int Rank { get; set; }
         public int Points { get; set; }
+
+        public int Year
+        {
+            get
+            {
+                if (ContestName == null) return 0;
+                return int.Parse(ContestName.Split(' ')[2]);
+            }
+        }
+
         public override string ToString()
         {
             return $"{Party} - {Rank}({Points})";
