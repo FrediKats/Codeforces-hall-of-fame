@@ -59,70 +59,49 @@ namespace CodeforcesHallOfFame
             return partitionSummaries;
         }
 
-        public void DoubleWinnersWithDifferentTeam()
+        public List<PartitionSummary> DoubleWinnersWithDifferentTeam()
         {
             var doubleWinner = CreateListUsers()
-                .GroupBy(p => p.User)
-                .OrderBy(g => g.Sum(p => p.Place))
+                .GroupBy(p => p.Username)
+                .OrderBy(g => g.Sum(p => p.Partition.Rank))
                 .Where(g => g.Count() >= 2);
 
-            foreach (var group in doubleWinner)
-            {
-                string res = $"- {Formatter.CodeforcesUserLink(group.Key)}: ";
+            List<PartitionSummary> partitionSummaries = doubleWinner
+                .Select(userPartitions => new PartitionSummary(
+                    userPartitions.Key,
+                    userPartitions.Select(g => g.Partition).ToList()))
+                .ToList();
 
-                foreach (var partition in group)
-                {
-                    string partitionInfo = $" {partition.TeamName}( **{partition.Place}** place, {partition.Year}) ";
-                    res += partitionInfo;
-                }
-                Console.WriteLine(res);
-            }
+            return partitionSummaries;
         }
 
 
-        public void OneWinList()
+        public List<PartitionSummary> OneWinList()
         {
             var doubleWinner = CreateListUsers()
-                .GroupBy(p => p.User)
-                .OrderBy(g => g.Sum(p => p.Place))
+                .GroupBy(p => p.Username)
+                .OrderBy(g => g.Sum(p => p.Partition.Rank))
                 .Where(g => g.Count() == 1);
 
-            foreach (var group in doubleWinner)
-            {
-                string res = $"- {Formatter.CodeforcesUserLink(group.Key)}: ";
-
-                foreach (var partition in group)
-                {
-                    string partitionInfo = $" {partition.TeamName}( **{partition.Place}** place, {partition.Year}) ";
-                    res += partitionInfo;
-                }
-                Console.WriteLine(res);
-            }
+            List<PartitionSummary> partitionSummaries = doubleWinner
+                .Select(userPartitions => new PartitionSummary(
+                    userPartitions.Key,
+                    userPartitions.Select(g => g.Partition).ToList()))
+                .ToList();
+            return partitionSummaries;
         }
-        private List<UserPartition> CreateListUsers()
-        {
-            var users = new List<UserPartition>();
-            foreach (var partition in AllYearPartition.Except(WinnersInSameTeam))
-            {
-                users.Add(new UserPartition()
-                {
-                    Place = partition.Rank,
-                    TeamName = partition.Party.TeamName,
-                    User = partition.Party.Members[0].Handle,
-                    Year = partition.Year
-                });
 
+        private List<(string Username, Partition Partition)> CreateListUsers()
+        {
+            var users = new List<(string, Partition)>();
+
+            foreach (Partition partition in AllYearPartition.Except(WinnersInSameTeam))
+            {
+                users.Add((partition.Party.Members[0].Handle, partition));
                 if (partition.Party.Members.Length == 2)
-                {
-                    users.Add(new UserPartition()
-                    {
-                        Place = partition.Rank,
-                        TeamName = partition.Party.TeamName,
-                        User = partition.Party.Members[1].Handle,
-                        Year = partition.Year
-                    });
-                }
+                    users.Add((partition.Party.Members[1].Handle, partition));
             }
+
             return users;
         }
     }

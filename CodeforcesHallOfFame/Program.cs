@@ -12,10 +12,10 @@ namespace CodeforcesHallOfFame
             analizer.DoubleWinnerCouple().ForEach(s => Console.WriteLine(s.ToFormatString()));
             
             Console.WriteLine("\n\tUsers with two wins in different team\n");
-            analizer.DoubleWinnersWithDifferentTeam();
+            analizer.DoubleWinnersWithDifferentTeam().ForEach(s => Console.WriteLine(s.ToFormatString()));
             
             Console.WriteLine("\n\tUsers with one win\n");
-            analizer.OneWinList();
+            analizer.OneWinList().ForEach(s => Console.WriteLine(s.ToFormatString()));
         }
     }
 }
