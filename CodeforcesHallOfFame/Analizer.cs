@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeforcesApiWrapper;
 using CodeforcesApiWrapper.Types;
 using CodeforcesHallOfFame.Models;
 
@@ -14,7 +15,7 @@ namespace CodeforcesHallOfFame
         public Analizer()
         {
             ReadData();
-            foreach (var partition in AllYearPartition)
+            foreach (Partition partition in AllYearPartition)
             {
                 partition.Party.Members = partition.Party.Members.OrderBy(u => u.Handle).ToArray();
             }
@@ -23,22 +24,21 @@ namespace CodeforcesHallOfFame
         private void ReadData()
         {
             var cf = new Codeforces();
-            var cups = new[] {("VK CUP 15", 562), ("VK CUP 16", 695), ("VK CUP 17", 823)};
             AllYearPartition = new List<Partition>();
+            var cups = new[] { (15, 562), (16, 695), (17, 823) };
 
-            foreach ((String title, Int32 contestId) in cups)
+            foreach ((Int32 year, Int32 contestId) in cups)
             {
                 List<RanklistRow> rankList = cf
                     .Contest
                     .Standings(contestId).Result
                     .Result.Rows;
 
-                AllYearPartition.AddRange(rankList.Select(r => new Partition(r, title)));
-
+                AllYearPartition.AddRange(rankList.Select(r => new Partition(r, year)));
             }
         }
 
-        public void DoubleWinnerCouple()
+        public List<PartitionSummary> DoubleWinnerCouple()
         {
             var doubleWinner = AllYearPartition
                 .GroupBy(p => p.Party.HandlesToString())
@@ -46,24 +46,21 @@ namespace CodeforcesHallOfFame
                 .Where(g => g.Count() >= 2);
 
             WinnersInSameTeam = new List<Partition>();
-            foreach (var team in doubleWinner)
+            List<PartitionSummary> partitionSummaries = new List<PartitionSummary>();
+            foreach (IGrouping<String, Partition> teamPartitions in doubleWinner)
             {
-                string res = $"- {team.Key}: ";
-                foreach (var partition in team)
+                partitionSummaries.Add(new PartitionSummary(teamPartitions.Key, teamPartitions.ToList()));
+                foreach (Partition partition in teamPartitions)
                 {
                     WinnersInSameTeam.Add(partition);
-
-                    string partitionInfo = $" {partition.Party.TeamName}( **{partition.Rank}** place, {partition.Year}) ";
-                    res += partitionInfo;
                 }
-                Console.WriteLine(res);
             }
+
+            return partitionSummaries;
         }
 
         public void DoubleWinnersWithDifferentTeam()
         {
-           
-
             var doubleWinner = CreateListUsers()
                 .GroupBy(p => p.User)
                 .OrderBy(g => g.Sum(p => p.Place))
@@ -107,7 +104,6 @@ namespace CodeforcesHallOfFame
             var users = new List<UserPartition>();
             foreach (var partition in AllYearPartition.Except(WinnersInSameTeam))
             {
-                //TODO: fix year
                 users.Add(new UserPartition()
                 {
                     Place = partition.Rank,
