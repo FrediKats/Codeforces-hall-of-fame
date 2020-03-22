@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using CodeforcesApiWrapper.Types;
@@ -22,20 +22,24 @@ namespace CodeforcesHallOfFame
 
         private void ReadData()
         {
-            DataReader dr = new DataReader();
-            
-            List<RanklistRow> listVk15 = dr.CodeforcesApiRequest(562);
-            List<RanklistRow> listVk16 = dr.CodeforcesApiRequest(695);
-            List<RanklistRow> listVk17 = dr.CodeforcesApiRequest(823);
+            var cf = new Codeforces();
+            var cups = new[] {("VK CUP 15", 562), ("VK CUP 16", 695), ("VK CUP 17", 823)};
             AllYearPartition = new List<Partition>();
-            AllYearPartition.AddRange(listVk15.Select(r => new Partition(r, "VK CUP 15")));
-            AllYearPartition.AddRange(listVk16.Select(r => new Partition(r, "VK CUP 16")));
-            AllYearPartition.AddRange(listVk17.Select(r => new Partition(r, "VK CUP 17")));
+
+            foreach ((String title, Int32 contestId) in cups)
+            {
+                List<RanklistRow> rankList = cf
+                    .Contest
+                    .Standings(contestId).Result
+                    .Result.Rows;
+
+                AllYearPartition.AddRange(rankList.Select(r => new Partition(r, title)));
+
+            }
         }
 
         public void DoubleWinnerCouple()
         {
-            
             var doubleWinner = AllYearPartition
                 .GroupBy(p => p.Party.HandlesToString())
                 .OrderBy(g => g.Sum(p => p.Rank))
