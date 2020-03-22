@@ -25,7 +25,7 @@ namespace CodeforcesHallOfFame
         {
             var cf = new Codeforces();
             AllYearPartition = new List<Partition>();
-            var cups = new[] { (15, 562), (16, 695), (17, 823) };
+            var cups = new[] { (15, 562), (16, 695), (17, 823), (18, 951) };
 
             foreach ((Int32 year, Int32 contestId) in cups)
             {
