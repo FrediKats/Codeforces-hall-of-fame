@@ -1,13 +1,22 @@
 ﻿using System;
+using CodeforcesApiWrapper.Types;
 
 namespace CodeforcesHallOfFame.Models
 {
     public class Partition
     {
         public string ContestName { get; set; }
-        public Team Party { get; set; }
+        public Party Party { get; set; }
         public int Rank { get; set; }
-        public int Points { get; set; }
+        public double Points { get; set; }
+
+        public Partition(RanklistRow rank, string contestName)
+        {
+            ContestName = contestName;
+            Party = rank.Party;
+            Rank = rank.Rank;
+            Points = rank.Points;
+        }
 
         public int Year
         {
