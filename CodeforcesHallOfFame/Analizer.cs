@@ -37,20 +37,19 @@ namespace CodeforcesHallOfFame
         {
             
             var doubleWinner = AllYearPartition
-                .GroupBy(p => p.Party)
+                .GroupBy(p => p.Party.HandlesToString())
                 .OrderBy(g => g.Sum(p => p.Rank))
                 .Where(g => g.Count() >= 2);
 
             WinnersInSameTeam = new List<Partition>();
             foreach (var team in doubleWinner)
             {
-                string res = $"- {team.Key.HandlesToString()}: ";
+                string res = $"- {team.Key}: ";
                 foreach (var partition in team)
                 {
                     WinnersInSameTeam.Add(partition);
 
-                    //TODO: fix {partition.Year}
-                    string partitionInfo = $" {partition.Party.TeamName}( **{partition.Rank}** place, ) ";
+                    string partitionInfo = $" {partition.Party.TeamName}( **{partition.Rank}** place, {partition.Year}) ";
                     res += partitionInfo;
                 }
                 Console.WriteLine(res);
@@ -110,7 +109,7 @@ namespace CodeforcesHallOfFame
                     Place = partition.Rank,
                     TeamName = partition.Party.TeamName,
                     User = partition.Party.Members[0].Handle,
-                    //Year = partition.Year
+                    Year = partition.Year
                 });
 
                 if (partition.Party.Members.Length == 2)
@@ -120,7 +119,7 @@ namespace CodeforcesHallOfFame
                         Place = partition.Rank,
                         TeamName = partition.Party.TeamName,
                         User = partition.Party.Members[1].Handle,
-                        //Year = partition.Year
+                        Year = partition.Year
                     });
                 }
             }
