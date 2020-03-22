@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CodeforcesApiWrapper.Types;
 using CodeforcesHallOfFame.Models;
 
 namespace CodeforcesHallOfFame
@@ -9,26 +10,27 @@ namespace CodeforcesHallOfFame
     {
         public List<Partition> AllYearPartition { get; set; }
         public List<Partition> WinnersInSameTeam { get; set; }
-        public List<Partition> WinnersIsDiffTeam { get; set; }
+
         public Analizer()
         {
             ReadData();
             foreach (var partition in AllYearPartition)
             {
-                partition.Party.Order();
+                partition.Party.Members = partition.Party.Members.OrderBy(u => u.Handle).ToArray();
             }
         }
 
         private void ReadData()
         {
             DataReader dr = new DataReader();
-            var listVk15 = dr.CodeforcesApiRequest(562);
-            var listVk16 = dr.CodeforcesApiRequest(695);
-            var listVk17 = dr.CodeforcesApiRequest(823);
+            
+            List<RanklistRow> listVk15 = dr.CodeforcesApiRequest(562);
+            List<RanklistRow> listVk16 = dr.CodeforcesApiRequest(695);
+            List<RanklistRow> listVk17 = dr.CodeforcesApiRequest(823);
             AllYearPartition = new List<Partition>();
-            AllYearPartition.AddRange(listVk15);
-            AllYearPartition.AddRange(listVk16);
-            AllYearPartition.AddRange(listVk17);
+            AllYearPartition.AddRange(listVk15.Select(r => new Partition(r, "VK CUP 15")));
+            AllYearPartition.AddRange(listVk16.Select(r => new Partition(r, "VK CUP 16")));
+            AllYearPartition.AddRange(listVk17.Select(r => new Partition(r, "VK CUP 17")));
         }
 
         public void DoubleWinnerCouple()
@@ -47,7 +49,8 @@ namespace CodeforcesHallOfFame
                 {
                     WinnersInSameTeam.Add(partition);
 
-                    string partitionInfo = $" {partition.Party.TeamName}( **{partition.Rank}** place, {partition.Year}) ";
+                    //TODO: fix {partition.Year}
+                    string partitionInfo = $" {partition.Party.TeamName}( **{partition.Rank}** place, ) ";
                     res += partitionInfo;
                 }
                 Console.WriteLine(res);
@@ -101,21 +104,23 @@ namespace CodeforcesHallOfFame
             var users = new List<UserPartition>();
             foreach (var partition in AllYearPartition.Except(WinnersInSameTeam))
             {
+                //TODO: fix year
                 users.Add(new UserPartition()
                 {
                     Place = partition.Rank,
                     TeamName = partition.Party.TeamName,
                     User = partition.Party.Members[0].Handle,
-                    Year = partition.Year
+                    //Year = partition.Year
                 });
-                if (partition.Party.Members.Count == 2)
+
+                if (partition.Party.Members.Length == 2)
                 {
                     users.Add(new UserPartition()
                     {
                         Place = partition.Rank,
                         TeamName = partition.Party.TeamName,
                         User = partition.Party.Members[1].Handle,
-                        Year = partition.Year
+                        //Year = partition.Year
                     });
                 }
             }
