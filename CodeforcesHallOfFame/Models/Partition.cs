@@ -22,22 +22,5 @@ namespace CodeforcesHallOfFame.Models
         {
             return $"{Party} - {Rank}({Points})";
         }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Partition p)
-                return Party.Equals(p.Party);
-            return false;
-        }
-
-        protected bool Equals(Partition other)
-        {
-            return Party.Equals(other.Party);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Party != null ? Party.GetHashCode() : 0);
-        }
     }
 }

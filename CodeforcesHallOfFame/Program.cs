@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace CodeforcesHallOfFame
 {
@@ -6,6 +7,8 @@ namespace CodeforcesHallOfFame
     {
         static void Main()
         {
+            Console.OutputEncoding = Encoding.UTF8;
+
             var analizer = new Analizer();
 
             Console.WriteLine("\tTeams with two wins\n");
