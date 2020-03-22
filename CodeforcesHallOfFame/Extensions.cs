@@ -1,4 +1,5 @@
-﻿using CodeforcesApiWrapper.Types;
+﻿using System.Linq;
+using CodeforcesApiWrapper.Types;
 
 namespace CodeforcesHallOfFame
 {
@@ -6,9 +7,7 @@ namespace CodeforcesHallOfFame
     {
         public static string HandlesToString(this Party party)
         {
-            return party.Members.Length == 1
-                ? $"{party.Members[0]}"
-                : $"{party.Members[0]} & {party.Members[1]}";
+            return string.Join(" & ", party.Members.Select(m => m.Handle).ToList());
         }
     }
 }
