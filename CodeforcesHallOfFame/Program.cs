@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CodeforcesHallOfFame.Models;
 
 namespace CodeforcesHallOfFame
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Analizer analizer = new Analizer();
-            Console.WriteLine("\n\nTeams with two wins\n");
-            analizer.DoubleWinnerCouple();
-            Console.WriteLine("\n\nUsers with two wins in different team\n");
+            var analizer = new Analizer();
+
+            Console.WriteLine("\tTeams with two wins\n");
+            analizer.DoubleWinnerCouple().ForEach(s => Console.WriteLine(s.ToFormatString()));
+            
+            Console.WriteLine("\n\tUsers with two wins in different team\n");
             analizer.DoubleWinnersWithDifferentTeam();
-            Console.WriteLine("\n\n");
+            
+            Console.WriteLine("\n\tUsers with one win\n");
             analizer.OneWinList();
         }
     }
