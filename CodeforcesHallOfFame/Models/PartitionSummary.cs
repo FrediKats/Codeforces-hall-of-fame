@@ -17,10 +17,10 @@ namespace CodeforcesHallOfFame.Models
 
         public string ToFormatString()
         {
-            string res = $"- {Handles}: ";
+            string res = $"{Handles, -20}: ";
 
             return Partitions
-                .Select(partition => $" {partition.Party.TeamName}( **{partition.Rank}** place, {partition.Year}) ")
+                .Select(partition => $" {partition.Party.TeamName} ({partition.Rank} place, y{partition.Year})")
                 .Aggregate(res, (current, partitionInfo) => current + partitionInfo);
         }
     }
